@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import PromptCard from "@/components/PromptCard";
 import { prompts as initialPrompts, promptCategories } from "@/lib/data";
 
@@ -46,11 +46,11 @@ export default function CatalogPage() {
     return result;
   }, [searchQuery, selectedCategory, sortBy, localPrompts]);
 
-  const onToggleFavorite = (id: string) => {
+  const onToggleFavorite = useCallback((id: string) => {
     setLocalPrompts((prev) =>
       prev.map((p) => (p.id === id ? { ...p, isFavorite: !p.isFavorite } : p))
     );
-  };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">

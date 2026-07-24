@@ -1,5 +1,3 @@
-"use client";
-
 import { prompts as allPrompts } from "@/lib/data";
 import PromptCard from "@/components/PromptCard";
 import Link from "next/link";

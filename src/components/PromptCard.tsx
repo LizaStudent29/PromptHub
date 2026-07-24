@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import { Heart, Star, BarChart3 } from "lucide-react";
 import type { Prompt } from "@/lib/data";
@@ -18,10 +19,10 @@ const categoryColors: Record<string, string> = {
   "Аналитика": "bg-pink-100 text-pink-700",
 };
 
-export default function PromptCard({
+const PromptCard: React.FC<PromptCardProps> = React.memo(function PromptCard({
   prompt,
   onToggleFavorite,
-}: PromptCardProps) {
+}) {
   const { id, title, description, author, category, tags, rating, uses, isFavorite } = prompt;
   const badgeClass = categoryColors[category] || "bg-gray-100 text-gray-700";
 
@@ -111,4 +112,8 @@ export default function PromptCard({
       </div>
     </div>
   );
-}
+});
+
+PromptCard.displayName = "PromptCard";
+
+export default PromptCard;

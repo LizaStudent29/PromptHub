@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -13,23 +14,25 @@ const navLinks = [
   { label: "Исследования", href: "/research" },
 ];
 
-export default function Header() {
+const Header: React.FC = React.memo(function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [headerSearch, setHeaderSearch] = useState("");
 
-  const isActive = (href: string) =>
-    pathname === href || pathname.startsWith(href + "/");
+  const isActive = useCallback((href: string) =>
+    pathname === href || pathname.startsWith(href + "/"),
+    [pathname]
+  );
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (headerSearch.trim().length >= 3) {
       router.push(`/search?q=${encodeURIComponent(headerSearch.trim())}`);
       setHeaderSearch("");
       setMobileOpen(false);
     }
-  };
+  }, [headerSearch, router]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/80 backdrop-blur-md shadow-sm">
@@ -161,4 +164,8 @@ export default function Header() {
       )}
     </header>
   );
-}
+});
+
+Header.displayName = "Header";
+
+export default Header;

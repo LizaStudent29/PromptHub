@@ -26,17 +26,17 @@ export default function EditorPage() {
     validate({ title: promptTitle, text: promptText })
   }, [])
 
-  const handleTitleChange = (value: string) => {
+  const handleTitleChange = useCallback((value: string) => {
     setPromptTitle(value)
     validateSingle("title", value)
     setSaved(false)
-  }
+  }, [validateSingle])
 
-  const handleTextChange = (value: string) => {
+  const handleTextChange = useCallback((value: string) => {
     setPromptText(value)
     validateSingle("text", value)
     setSaved(false)
-  }
+  }, [validateSingle])
 
   const handleSave = useCallback(() => {
     const isValidForm = validate({ title: promptTitle, text: promptText })
@@ -49,17 +49,17 @@ export default function EditorPage() {
     }
   }, [promptTitle, promptText, validate, touchField])
 
-  const handleNew = () => {
+  const handleNew = useCallback(() => {
     setPromptTitle("")
     setPromptText("")
     setSaved(false)
-  }
+  }, [])
 
-  const handleCopy = () => {
+  const handleCopy = useCallback(() => {
     if (promptText) navigator.clipboard.writeText(promptText)
-  }
+  }, [promptText])
 
-  const handleFormat = () => {
+  const handleFormat = useCallback(() => {
     const lines = promptText.split("\n")
     const formatted = lines
       .map((line) => {
@@ -71,7 +71,7 @@ export default function EditorPage() {
       })
       .join("\n")
     setPromptText(formatted)
-  }
+  }, [promptText])
 
   return (
     <div className="min-h-screen bg-gray-50 py-10">

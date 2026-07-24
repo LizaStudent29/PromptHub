@@ -1,10 +1,11 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Search, X, Loader2 } from "lucide-react"
 import { templates, templateCategories } from "@/lib/data"
+import TemplateCard from "@/components/TemplateCard"
 
 export default function TemplatesPage() {
   const router = useRouter();
@@ -90,18 +91,18 @@ export default function TemplatesPage() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const handleQueryChange = (value: string) => {
+  const handleQueryChange = useCallback((value: string) => {
     setQuery(value);
     setHighlightIndex(-1);
     setIsSuggestionsOpen(value.length >= MIN_CHARS);
-  };
+  }, []);
 
-  const selectSuggestion = (title: string) => {
+  const selectSuggestion = useCallback((title: string) => {
     setQuery(title);
     setIsSuggestionsOpen(false);
-  };
+  }, []);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (!isSuggestionsOpen || suggestions.length === 0) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -111,20 +112,21 @@ export default function TemplatesPage() {
       setHighlightIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
     } else if (e.key === "Enter" && highlightIndex >= 0) {
       e.preventDefault();
-      selectSuggestion(suggestions[highlightIndex].title);
+      setQuery(suggestions[highlightIndex].title);
+      setIsSuggestionsOpen(false);
     } else if (e.key === "Escape") {
       setIsSuggestionsOpen(false);
     }
-  };
+  }, [isSuggestionsOpen, suggestions, highlightIndex]);
 
-  const clearSearch = () => {
+  const clearSearch = useCallback(() => {
     setQuery("");
     setDebouncedQuery("");
     setSuggestions([]);
     inputRef.current?.focus();
-  };
+  }, []);
 
-  const filtered = templates.filter((t) => {
+  const filtered = useMemo(() => templates.filter((t) => {
     const matchesCategory = selectedCategory === "Все" || t.category === selectedCategory;
     let matchesSearch = true;
     if (debouncedQuery.length >= MIN_CHARS) {
@@ -135,7 +137,7 @@ export default function TemplatesPage() {
         t.tags.some((tag) => tag.toLowerCase().includes(q));
     }
     return matchesCategory && matchesSearch;
-  });
+  }), [selectedCategory, debouncedQuery]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-10">
@@ -242,28 +244,7 @@ export default function TemplatesPage() {
         ) : !isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((t) => (
-              <Link
-                key={t.id}
-                href={`/templates/${t.id}`}
-                className="block bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow"
-              >
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{t.title}</h3>
-                <p className="text-sm text-gray-500 mb-3 line-clamp-2">{t.description}</p>
-                <span className="inline-block px-2 py-1 text-xs font-medium bg-violet-50 text-violet-700 rounded mb-3">
-                  {t.category}
-                </span>
-                <div className="flex flex-wrap gap-1 mb-4">
-                  {t.tags?.map((tag) => (
-                    <span key={tag} className="px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <div className="flex items-center justify-between text-xs text-gray-400">
-                  <span>{t.author}</span>
-                  <span>{t.uses} использований</span>
-                </div>
-              </Link>
+              <TemplateCard key={t.id} template={t} />
             ))}
           </div>
         ) : null}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X, Loader2, AlertCircle } from "lucide-react";
 import PromptCard from "@/components/PromptCard";
@@ -144,20 +144,20 @@ export default function SearchPage() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const handleQueryChange = (value: string) => {
+  const handleQueryChange = useCallback((value: string) => {
     setQuery(value);
     setHighlightIndex(-1);
     if (value.length >= MIN_CHARS) setIsSuggestionsOpen(true);
     else setIsSuggestionsOpen(false);
-  };
+  }, []);
 
-  const selectSuggestion = (title: string) => {
+  const selectSuggestion = useCallback((title: string) => {
     setQuery(title);
     setIsSuggestionsOpen(false);
     setHighlightIndex(-1);
-  };
+  }, []);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (!isSuggestionsOpen || suggestions.length === 0) return;
 
     if (e.key === "ArrowDown") {
@@ -172,29 +172,30 @@ export default function SearchPage() {
       );
     } else if (e.key === "Enter" && highlightIndex >= 0) {
       e.preventDefault();
-      selectSuggestion(suggestions[highlightIndex].title);
+      setQuery(suggestions[highlightIndex].title);
+      setIsSuggestionsOpen(false);
     } else if (e.key === "Escape") {
       setIsSuggestionsOpen(false);
     }
-  };
+  }, [isSuggestionsOpen, suggestions, highlightIndex]);
 
-  const clearSearch = () => {
+  const clearSearch = useCallback(() => {
     setQuery("");
     setDebouncedQuery("");
     setSuggestions([]);
     setResults([]);
     searchExecutedRef.current = false;
     inputRef.current?.focus();
-  };
+  }, []);
 
-  const filteredResults = results.filter((p) => {
+  const filteredResults = useMemo(() => results.filter((p) => {
     if (selectedCategory && selectedCategory !== "Все") {
       return p.category === selectedCategory;
     }
     return true;
-  });
+  }), [results, selectedCategory]);
 
-  const sortedResults = [...filteredResults].sort((a, b) => {
+  const sortedResults = useMemo(() => [...filteredResults].sort((a, b) => {
     switch (sortBy) {
       case "rating":
         return b.rating - a.rating;
@@ -207,7 +208,7 @@ export default function SearchPage() {
       default:
         return 0;
     }
-  });
+  }), [filteredResults, sortBy]);
 
   return (
     <div className="min-h-screen bg-gray-50">

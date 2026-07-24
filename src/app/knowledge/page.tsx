@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Clock, BookOpen, ChevronRight } from "lucide-react";
 import { knowledgeArticles, knowledgeCategories } from "@/lib/data";
@@ -9,7 +9,7 @@ export default function KnowledgePage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredArticles = knowledgeArticles.filter((article) => {
+  const filteredArticles = useMemo(() => knowledgeArticles.filter((article) => {
     const matchesCategory = selectedCategory
       ? article.category === selectedCategory
       : true;
@@ -18,7 +18,7 @@ export default function KnowledgePage() {
       article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       article.summary.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
-  });
+  }), [selectedCategory, searchQuery]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">

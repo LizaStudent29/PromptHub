@@ -11,7 +11,7 @@ export default function MyTemplatesPage() {
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Мои шаблоны</h1>
           <Link
-            href="/editor"
+            href="/profile/my-templates/create"
             className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
           >
             <Plus className="w-4 h-4" />
@@ -22,7 +22,7 @@ export default function MyTemplatesPage() {
         {myTemplates.length === 0 ? (
           <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
             <p className="text-gray-500 text-lg mb-2">У вас пока нет шаблонов</p>
-            <Link href="/editor" className="text-blue-600 hover:underline text-sm">
+            <Link href="/profile/my-templates/create" className="text-blue-600 hover:underline text-sm">
               Создать первый шаблон
             </Link>
           </div>

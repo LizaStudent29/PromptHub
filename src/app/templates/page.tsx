@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import Link from "next/link"
 import { Search, X, Loader2 } from "lucide-react"
 import { templates, templateCategories } from "@/lib/data"
 import TemplateCard from "@/components/TemplateCard"
@@ -16,13 +15,13 @@ export default function TemplatesPage() {
   const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
   const [selectedCategory, setSelectedCategory] = useState("Все");
   const [isLoading, setIsLoading] = useState(false);
-  const [suggestions, setSuggestions] = useState<{ id: string; title: string; category: string }[]>([]);
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
   const [highlightIndex, setHighlightIndex] = useState(-1);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const loadingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const MIN_CHARS = 3;
   const DEBOUNCE_MS = 300;
@@ -49,19 +48,27 @@ export default function TemplatesPage() {
 
   // Simulate loading
   useEffect(() => {
+    if (loadingTimerRef.current) clearTimeout(loadingTimerRef.current);
+
     if (debouncedQuery.length >= MIN_CHARS) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsLoading(true);
-      const timer = setTimeout(() => setIsLoading(false), 200 + Math.random() * 300);
-      return () => clearTimeout(timer);
+      loadingTimerRef.current = setTimeout(
+        () => setIsLoading(false),
+        200 + Math.random() * 300
+      );
+    } else {
+      setIsLoading(false);
     }
-    setIsLoading(false);
+    return () => {
+      if (loadingTimerRef.current) clearTimeout(loadingTimerRef.current);
+    };
   }, [debouncedQuery]);
 
-  // Suggestions
-  useEffect(() => {
+  const suggestions = useMemo(() => {
     if (debouncedQuery.length >= MIN_CHARS) {
       const q = debouncedQuery.toLowerCase();
-      const matched = templates
+      return templates
         .filter(
           (t) =>
             t.title.toLowerCase().includes(q) ||
@@ -69,10 +76,8 @@ export default function TemplatesPage() {
             t.tags.some((tag) => tag.toLowerCase().includes(q))
         )
         .slice(0, 5);
-      setSuggestions(matched);
-    } else {
-      setSuggestions([]);
     }
+    return [];
   }, [debouncedQuery]);
 
   // Close suggestions on outside click
@@ -122,7 +127,6 @@ export default function TemplatesPage() {
   const clearSearch = useCallback(() => {
     setQuery("");
     setDebouncedQuery("");
-    setSuggestions([]);
     inputRef.current?.focus();
   }, []);
 
@@ -149,6 +153,7 @@ export default function TemplatesPage() {
             {templateCategories.map((cat) => (
               <button
                 key={cat}
+                aria-pressed={selectedCategory === cat}
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   selectedCategory === cat
@@ -169,9 +174,11 @@ export default function TemplatesPage() {
             }}
             className="relative w-full sm:w-72"
           >
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" aria-hidden="true" />
+            <label htmlFor="templates-search" className="sr-only">Поиск шаблонов</label>
             <input
               ref={inputRef}
+              id="templates-search"
               type="search"
               name="q"
               value={query}

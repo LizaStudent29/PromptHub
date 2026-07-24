@@ -32,7 +32,7 @@ export default function FavoritesPage() {
               Избранное пусто
             </h3>
             <p className="mt-1 text-sm text-gray-500">
-              Добавляйте промпты в избранное, чтобы они aparecer aquí
+              Добавляйте промпты в избранное, чтобы они появились здесь
             </p>
             <Link
               href="/catalog"

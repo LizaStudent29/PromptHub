@@ -65,10 +65,11 @@ export default function SettingsPage() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Профиль</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="settings-name" className="block text-sm font-medium text-gray-700 mb-1">
                   Имя <span className="text-red-500">*</span>
                 </label>
                 <input
+                  id="settings-name"
                   type="text"
                   value={name}
                   onChange={(e) => handleNameChange(e.target.value)}
@@ -87,10 +88,11 @@ export default function SettingsPage() {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="settings-email" className="block text-sm font-medium text-gray-700 mb-1">
                   Email <span className="text-red-500">*</span>
                 </label>
                 <input
+                  id="settings-email"
                   type="email"
                   value={email}
                   onChange={(e) => handleEmailChange(e.target.value)}
@@ -119,6 +121,9 @@ export default function SettingsPage() {
                 <p className="text-xs text-gray-500">Получать уведомления на почту</p>
               </div>
               <button
+                role="switch"
+                aria-checked={emailNotifications}
+                aria-label="Email-уведомления"
                 onClick={() => setEmailNotifications(!emailNotifications)}
                 className={`relative w-11 h-6 rounded-full transition-colors ${
                   emailNotifications ? "bg-violet-600" : "bg-gray-200"
@@ -135,7 +140,7 @@ export default function SettingsPage() {
 
           <div className="bg-white rounded-xl border border-gray-200 p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Внешний вид</h2>
-            <div className="flex gap-3">
+            <div className="flex gap-3" role="group" aria-label="Выбор темы">
               {[
                 { value: "light", label: "Светлая" },
                 { value: "dark", label: "Тёмная" },
@@ -143,6 +148,7 @@ export default function SettingsPage() {
               ].map((option) => (
                 <button
                   key={option.value}
+                  aria-pressed={theme === option.value}
                   onClick={() => setTheme(option.value)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     theme === option.value

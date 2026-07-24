@@ -75,7 +75,9 @@ export default function CatalogPage() {
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
+            <label htmlFor="catalog-search" className="sr-only">Поиск по названию или описанию</label>
             <input
+              id="catalog-search"
               type="text"
               placeholder="Поиск по названию или описанию..."
               value={searchQuery}
@@ -84,7 +86,9 @@ export default function CatalogPage() {
             />
           </div>
 
+          <label htmlFor="catalog-sort" className="sr-only">Сортировка</label>
           <select
+            id="catalog-sort"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortOption)}
             className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-700 transition-colors focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -99,6 +103,7 @@ export default function CatalogPage() {
           {promptCategories.map((cat) => (
             <button
               key={cat}
+              aria-pressed={(cat === "Все" && selectedCategory === null) || selectedCategory === cat}
               onClick={() =>
                 setSelectedCategory(
                   selectedCategory === cat || (cat === "Все" && selectedCategory === null)

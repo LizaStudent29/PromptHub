@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import { templates } from "@/lib/data"
+import { PromptHighlight } from "@/components/PromptHighlight"
 
 export function generateStaticParams() {
   return templates.map((t) => ({ template: t.id }))
@@ -50,8 +51,17 @@ export default async function TemplateDetailPage({
             <span>Использований: <span className="text-gray-900 font-medium">{template.uses}</span></span>
           </div>
 
+          {template.content && (
+            <div className="mb-8 border-t border-gray-100 pt-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-3">Содержимое шаблона</h2>
+              <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
+                <PromptHighlight text={template.content} />
+              </div>
+            </div>
+          )}
+
           <Link
-            href="/editor"
+            href={`/editor`}
             className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
             Использовать шаблон

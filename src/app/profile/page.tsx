@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { FileText, Layout, Heart, Settings } from "lucide-react"
+import { FileText, Layout, Settings } from "lucide-react"
 
 export default function ProfilePage() {
   return (

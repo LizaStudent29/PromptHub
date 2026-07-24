@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { prompts } from "@/lib/data";
 
@@ -45,6 +45,7 @@ export function useSearch(minChars: number = 3, debounceMs: number = 300): UseSe
   useEffect(() => {
     const q = searchParams.get("q");
     if (q && q.length >= minChars) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setQuery(q);
       setDebouncedQuery(q);
     }
@@ -63,65 +64,53 @@ export function useSearch(minChars: number = 3, debounceMs: number = 300): UseSe
     };
   }, [query, debounceMs]);
 
-  // Simulate API search (local data)
-  const performSearch = useCallback(
-    (searchQuery: string) => {
-      // Cancel previous request
-      if (abortControllerRef.current) abortControllerRef.current.abort();
-      const controller = new AbortController();
-      abortControllerRef.current = controller;
-
-      if (searchQuery.length < minChars) {
-        setSuggestions([]);
-        setResults([]);
-        setIsLoading(false);
-        return;
-      }
-
-      setIsLoading(true);
-      setError(null);
-
-      // Simulate network delay (300-800ms)
-      const delay = 300 + Math.random() * 500;
-      const timer = setTimeout(() => {
-        if (controller.signal.aborted) return;
-
-        try {
-          const q = searchQuery.toLowerCase();
-          const matched = prompts.filter(
-            (p) =>
-              p.title.toLowerCase().includes(q) ||
-              p.description.toLowerCase().includes(q) ||
-              p.category.toLowerCase().includes(q) ||
-              p.tags.some((t) => t.toLowerCase().includes(q))
-          );
-
-          setSuggestions(matched.slice(0, 5));
-          setResults(matched);
-          setIsLoading(false);
-        } catch {
-          if (!controller.signal.aborted) {
-            setError("Произошла ошибка при поиске");
-            setIsLoading(false);
-          }
-        }
-      }, delay);
-
-      return () => {
-        clearTimeout(timer);
-        controller.abort();
-      };
-    },
-    [minChars]
-  );
-
   // Run search when debouncedQuery changes
   useEffect(() => {
-    const cleanup = performSearch(debouncedQuery);
+    if (abortControllerRef.current) abortControllerRef.current.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
+    if (debouncedQuery.length < minChars) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSuggestions([]);
+      setResults([]);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    const delay = 300 + Math.random() * 500;
+    const timer = setTimeout(() => {
+      if (controller.signal.aborted) return;
+
+      try {
+        const q = debouncedQuery.toLowerCase();
+        const matched = prompts.filter(
+          (p) =>
+            p.title.toLowerCase().includes(q) ||
+            p.description.toLowerCase().includes(q) ||
+            p.category.toLowerCase().includes(q) ||
+            p.tags.some((t) => t.toLowerCase().includes(q))
+        );
+
+        setSuggestions(matched.slice(0, 5));
+        setResults(matched);
+        setIsLoading(false);
+      } catch {
+        if (!controller.signal.aborted) {
+          setError("Произошла ошибка при поиске");
+          setIsLoading(false);
+        }
+      }
+    }, delay);
+
     return () => {
-      cleanup?.();
+      clearTimeout(timer);
+      controller.abort();
     };
-  }, [debouncedQuery, performSearch]);
+  }, [debouncedQuery, minChars]);
 
   // Cleanup on unmount
   useEffect(() => {

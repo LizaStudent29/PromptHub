@@ -34,7 +34,7 @@ export default function SearchPage() {
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
-  const searchExecutedRef = useRef(false);
+  const [searchExecuted, setSearchExecuted] = useState(false);
 
   const MIN_CHARS = 3;
   const DEBOUNCE_MS = 300;
@@ -61,64 +61,54 @@ export default function SearchPage() {
     }
   }, [debouncedQuery, router]);
 
-  // Simulate API search
-  const performSearch = useCallback(
-    (searchQuery: string) => {
-      if (abortRef.current) abortRef.current.abort();
-      const controller = new AbortController();
-      abortRef.current = controller;
-
-      if (searchQuery.length < MIN_CHARS) {
-        setSuggestions([]);
-        setResults([]);
-        setIsLoading(false);
-        return;
-      }
-
-      setIsLoading(true);
-      setError(null);
-
-      const delay = 300 + Math.random() * 500;
-      const timer = setTimeout(() => {
-        if (controller.signal.aborted) return;
-
-        try {
-          const q = searchQuery.toLowerCase();
-          const matched = prompts.filter(
-            (p) =>
-              p.title.toLowerCase().includes(q) ||
-              p.description.toLowerCase().includes(q) ||
-              p.category.toLowerCase().includes(q) ||
-              p.tags.some((t) => t.toLowerCase().includes(q))
-          );
-
-          setSuggestions(matched.slice(0, 5));
-          setResults(matched);
-          setIsLoading(false);
-          searchExecutedRef.current = true;
-        } catch {
-          if (!controller.signal.aborted) {
-            setError("Произошла ошибка при поиске. Попробуйте ещё раз.");
-            setIsLoading(false);
-          }
-        }
-      }, delay);
-
-      return () => {
-        clearTimeout(timer);
-        controller.abort();
-      };
-    },
-    []
-  );
-
   // Run search
   useEffect(() => {
-    const cleanup = performSearch(debouncedQuery);
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    if (debouncedQuery.length < MIN_CHARS) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSuggestions([]);
+      setResults([]);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    const delay = 300 + Math.random() * 500;
+    const timer = setTimeout(() => {
+      if (controller.signal.aborted) return;
+
+      try {
+        const q = debouncedQuery.toLowerCase();
+        const matched = prompts.filter(
+          (p) =>
+            p.title.toLowerCase().includes(q) ||
+            p.description.toLowerCase().includes(q) ||
+            p.category.toLowerCase().includes(q) ||
+            p.tags.some((t) => t.toLowerCase().includes(q))
+        );
+
+        setSuggestions(matched.slice(0, 5));
+        setResults(matched);
+        setIsLoading(false);
+        setSearchExecuted(true);
+      } catch {
+        if (!controller.signal.aborted) {
+          setError("Произошла ошибка при поиске. Попробуйте ещё раз.");
+          setIsLoading(false);
+        }
+      }
+    }, delay);
+
     return () => {
-      cleanup?.();
+      clearTimeout(timer);
+      controller.abort();
     };
-  }, [debouncedQuery, performSearch]);
+  }, [debouncedQuery]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -184,7 +174,7 @@ export default function SearchPage() {
     setDebouncedQuery("");
     setSuggestions([]);
     setResults([]);
-    searchExecutedRef.current = false;
+    setSearchExecuted(false);
     inputRef.current?.focus();
   }, []);
 
@@ -230,8 +220,10 @@ export default function SearchPage() {
           className="relative mt-8"
         >
           <div className="relative">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" aria-hidden="true" />
+            <label htmlFor="search-input" className="sr-only">Поиск промптов</label>
             <input
+              id="search-input"
               ref={inputRef}
               type="search"
               name="q"
@@ -315,7 +307,7 @@ export default function SearchPage() {
         )}
 
         {/* Results */}
-        {searchExecutedRef.current && !isLoading && !error && (
+        {searchExecuted && !isLoading && !error && (
           <>
             {/* Filters */}
             <div className="mt-6 flex flex-wrap items-center gap-4">
@@ -345,7 +337,9 @@ export default function SearchPage() {
                 ))}
               </div>
 
+              <label htmlFor="search-sort" className="sr-only">Сортировка</label>
               <select
+                id="search-sort"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
                 className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-violet-500"
@@ -386,7 +380,7 @@ export default function SearchPage() {
         )}
 
         {/* Initial state */}
-        {!searchExecutedRef.current && !isLoading && query.length < MIN_CHARS && (
+        {!searchExecuted && !isLoading && query.length < MIN_CHARS && (
           <div className="mt-16 flex flex-col items-center text-center">
             <Search className="h-16 w-16 text-gray-300" />
             <h3 className="mt-4 text-lg font-medium text-gray-900">

@@ -1,6 +1,7 @@
 import { prompts } from "@/lib/data";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { PromptHighlight } from "@/components/PromptHighlight";
 
 export function generateStaticParams() {
   return prompts.map((prompt) => ({
@@ -118,9 +119,7 @@ export default async function PromptDetailPage({
           <div className="mt-6">
             <h3 className="text-sm font-semibold text-gray-900">Промпт</h3>
             <div className="mt-2 rounded-lg border border-gray-200 bg-gray-50 p-4">
-              <pre className="whitespace-pre-wrap font-mono text-sm text-gray-800">
-                {prompt.content}
-              </pre>
+              <PromptHighlight text={prompt.content} />
             </div>
             <div className="mt-3 flex gap-3">
               <button className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700">

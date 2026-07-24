@@ -46,7 +46,7 @@ const Header: React.FC = React.memo(function Header() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav aria-label="Основная навигация" className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -73,7 +73,9 @@ const Header: React.FC = React.memo(function Header() {
             className="hidden items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 transition-colors focus-within:border-violet-300 focus-within:bg-white focus-within:ring-2 focus-within:ring-violet-100 sm:flex"
           >
             <Search className="h-4 w-4 text-gray-400" />
+            <label htmlFor="header-search" className="sr-only">Поиск промптов</label>
             <input
+              id="header-search"
               type="text"
               placeholder="Поиск промптов..."
               value={headerSearch}
@@ -129,7 +131,7 @@ const Header: React.FC = React.memo(function Header() {
       {/* Mobile Navigation */}
       {mobileOpen && (
         <div className="border-t border-gray-100 bg-white md:hidden">
-          <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3 sm:px-6">
+          <nav aria-label="Мобильная навигация" className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3 sm:px-6">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -151,7 +153,9 @@ const Header: React.FC = React.memo(function Header() {
               className="mt-2 flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 sm:hidden"
             >
               <Search className="h-4 w-4 text-gray-400" />
+              <label htmlFor="header-search-mobile" className="sr-only">Поиск промптов</label>
               <input
+                id="header-search-mobile"
                 type="text"
                 placeholder="Поиск промптов..."
                 value={headerSearch}

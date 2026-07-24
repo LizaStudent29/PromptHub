@@ -1,4 +1,4 @@
-import { templates, templateCategories, Template } from "@/lib/data";
+import { templates, Template } from "@/lib/data";
 
 function filterTemplates(
   items: Template[],

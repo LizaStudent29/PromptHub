@@ -36,7 +36,9 @@ export default function KnowledgePage() {
         <div className="mb-8">
           <div className="relative max-w-md mx-auto">
             <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <label htmlFor="knowledge-search" className="sr-only">Поиск статей</label>
             <input
+              id="knowledge-search"
               type="text"
               placeholder="Поиск статей..."
               value={searchQuery}
@@ -50,6 +52,7 @@ export default function KnowledgePage() {
           {knowledgeCategories.map((category) => (
             <button
               key={category}
+              aria-pressed={(category === "Все" && selectedCategory === null) || selectedCategory === category}
               onClick={() => setSelectedCategory(category === "Все" ? null : category)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 (category === "Все" && selectedCategory === null) || selectedCategory === category

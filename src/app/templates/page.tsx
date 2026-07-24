@@ -189,7 +189,7 @@ export default function TemplatesPage() {
               }}
               onKeyDown={handleKeyDown}
               placeholder={`Поиск (мин. ${MIN_CHARS} символа)...`}
-              className="w-full pl-10 pr-10 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+              className="w-full pl-10 pr-10 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
               autoComplete="off"
             />
             {query && (

@@ -98,7 +98,7 @@ export default function CreateTemplatePage() {
                 onChange={(e) => handleTitleChange(e.target.value)}
                 onBlur={() => touchField("title")}
                 placeholder="Название шаблона (минимум 3 символа)..."
-                className={`w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 transition-colors ${
+                className={`w-full px-4 py-2.5 border rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 transition-colors ${
                   errors.title && touched.title
                     ? "border-red-400 focus:ring-red-300"
                     : "border-gray-200 focus:ring-violet-500"
@@ -125,7 +125,7 @@ export default function CreateTemplatePage() {
                 onBlur={() => touchField("description")}
                 placeholder="Опишите для чего этот шаблон (минимум 10 символов)..."
                 rows={3}
-                className={`w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 transition-colors resize-none ${
+                className={`w-full px-4 py-2.5 border rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 transition-colors resize-none ${
                   errors.description && touched.description
                     ? "border-red-400 focus:ring-red-300"
                     : "border-gray-200 focus:ring-violet-500"
@@ -150,7 +150,7 @@ export default function CreateTemplatePage() {
                   id="tpl-category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 transition-colors bg-white"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-violet-500 transition-colors bg-white"
                 >
                   {templateCategories.filter((c) => c !== "Все").map((cat) => (
                     <option key={cat} value={cat}>{cat}</option>
@@ -168,7 +168,7 @@ export default function CreateTemplatePage() {
                   value={tags}
                   onChange={(e) => setTags(e.target.value)}
                   placeholder="Через запятую: CoT, Рассуждение"
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 transition-colors"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-violet-500 transition-colors"
                 />
               </div>
             </div>

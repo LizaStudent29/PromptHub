@@ -88,7 +88,7 @@ export default function RegisterPage() {
                   onBlur={() => touchField("name")}
                   placeholder="Ваше имя"
                   autoComplete="name"
-                  className={`w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 transition-colors ${
+                  className={`w-full px-4 py-2.5 border rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 transition-colors ${
                     errors.name && touched.name
                       ? "border-red-400 focus:ring-red-300"
                       : "border-gray-200 focus:ring-violet-500"
@@ -116,7 +116,7 @@ export default function RegisterPage() {
                   onBlur={() => touchField("email")}
                   placeholder="you@example.com"
                   autoComplete="email"
-                  className={`w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 transition-colors ${
+                  className={`w-full px-4 py-2.5 border rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 transition-colors ${
                     errors.email && touched.email
                       ? "border-red-400 focus:ring-red-300"
                       : "border-gray-200 focus:ring-violet-500"
@@ -144,7 +144,7 @@ export default function RegisterPage() {
                   onBlur={() => touchField("password")}
                   placeholder="Минимум 6 символов"
                   autoComplete="new-password"
-                  className={`w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 transition-colors ${
+                  className={`w-full px-4 py-2.5 border rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 transition-colors ${
                     errors.password && touched.password
                       ? "border-red-400 focus:ring-red-300"
                       : "border-gray-200 focus:ring-violet-500"

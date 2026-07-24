@@ -106,7 +106,7 @@ export default function PromptEditor({
           value={promptTitle}
           onChange={(e) => handleTitleChange(e.target.value)}
           onBlur={() => touchField("title")}
-          className={`w-full px-4 py-3 bg-white border rounded-lg text-lg font-medium focus:outline-none focus:ring-2 transition-colors ${
+          className={`w-full px-4 py-3 bg-white text-gray-900 border rounded-lg text-lg font-medium focus:outline-none focus:ring-2 transition-colors ${
             errors.title && touched.title
               ? "border-red-400 focus:ring-red-300"
               : "border-gray-200 focus:ring-violet-500"
@@ -169,7 +169,7 @@ export default function PromptEditor({
             value={promptText}
             onChange={(e) => handleTextChange(e.target.value)}
             onBlur={() => touchField("text")}
-            className={`w-full h-96 p-4 font-mono text-sm leading-relaxed resize-none focus:outline-none ${
+            className={`w-full h-96 p-4 font-mono text-sm text-gray-900 leading-relaxed resize-none focus:outline-none ${
               errors.text && touched.text ? "bg-red-50" : ""
             }`}
             aria-describedby={errors.text && touched.text ? "text-error" : undefined}

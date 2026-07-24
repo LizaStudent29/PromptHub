@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { Save, Copy, RotateCcw, Wand2, Eye, AlertCircle, CheckCircle } from "lucide-react"
 import { useFormValidation } from "@/hooks/useFormValidation"
 
@@ -22,15 +22,19 @@ export default function EditorPage() {
       },
     })
 
+  useEffect(() => {
+    validate({ title: promptTitle, text: promptText })
+  }, [])
+
   const handleTitleChange = (value: string) => {
     setPromptTitle(value)
-    if (touched.title) validateSingle("title", value)
+    validateSingle("title", value)
     setSaved(false)
   }
 
   const handleTextChange = (value: string) => {
     setPromptText(value)
-    if (touched.text) validateSingle("text", value)
+    validateSingle("text", value)
     setSaved(false)
   }
 
